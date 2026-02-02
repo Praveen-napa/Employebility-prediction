@@ -1,0 +1,25 @@
+# Core ML and Data Processing
+scikit-learn>=1.3.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Django and REST Framework
+django>=4.2.0
+djangorestframework>=3.14.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Testing
+pytest>=7.4.0
+hypothesis>=6.82.0
+
+# Model Persistence
+joblib>=1.3.0
+
+# Configuration
+pyyaml>=6.0
+
+# Utilities
+python-dateutil>=2.8.2

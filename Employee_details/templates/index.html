@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Employability Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f093fb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        .form-group .label-info {
+            color: #666;
+            font-size: 0.85em;
+            font-weight: normal;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 180px;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-predict {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-sample {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-sample:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+        
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 15px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .result-container.show {
+            display: block;
+        }
+        
+        .result-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+        }
+        
+        .result-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+        }
+        
+        .result-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-error .result-title {
+            color: #721c24;
+        }
+        
+        .prediction-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .prediction-card {
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .prediction-card.employable {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .prediction-card.not-employable {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .prediction-card h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            opacity: 0.95;
+        }
+        
+        .prediction-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .prediction-card .label {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .employee-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .employee-info h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #f093fb;
+        }
+        
+        .info-item .label {
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .info-item .value {
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-card {
+                padding: 25px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Employee Employability Prediction</h1>
+            <p>Advanced AI-Powered Career Assessment System</p>
+        </div>
+        
+        <div class="main-card">
+            <h2 class="section-title">
+                <span>📋</span>
+                Employee Details
+            </h2>
+            
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            CGPA 
+                            <span class="label-info">(0.0 - 10.0)</span>
+                        </label>
+                        <input type="number" id="cgpa" step="0.01" min="0" max="10" value="8.5" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            Aptitude Score 
+                            <span class="label-info">(0 - 100)</span>
+                        </label>
+                        <input type="number" id="aptitude" min="0" max="100" value="85" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            Coding Skill 
+                            <span class="label-info">(0 - 10)</span>
+                        </label>
+                        <input type="number" id="coding" min="0" max="10" value="8" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            Communication 
+                            <span class="label-info">(0 - 10)</span>
+                        </label>
+                        <input type="number" id="communication" min="0" max="10" value="7" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            Internships 
+                            <span class="label-info">(0+)</span>
+                        </label>
+                        <input type="number" id="internships" min="0" value="2" required>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-predict">
+                        <span>🔮</span>
+                        Predict Employability
+                    </button>
+                    <button type="button" class="btn-sample" onclick="loadSample('high')">
+                        <span>⭐</span>
+                        High Performer
+                    </button>
+                    <button type="button" class="btn-sample" onclick="loadSample('average')">
+                        <span>📊</span>
+                        Average
+                    </button>
+                    <button type="button" class="btn-sample" onclick="loadSample('low')">
+                        <span>📉</span>
+                        Low Performer
+                    </button>
+                    <button type="button" class="btn-clear" onclick="clearForm()">
+                        <span>🔄</span>
+                        Clear
+                    </button>
+                </div>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing employee data...</p>
+            </div>
+            
+            <div id="result" class="result-container"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = '/api/employability/predict/';
+        
+        const samples = {
+            high: { cgpa: 9.2, aptitude: 90, coding: 9, communication: 8, internships: 3 },
+            average: { cgpa: 7.5, aptitude: 70, coding: 6, communication: 6, internships: 1 },
+            low: { cgpa: 5.5, aptitude: 55, coding: 4, communication: 5, internships: 0 }
+        };
+        
+        function loadSample(type) {
+            const sample = samples[type];
+            document.getElementById('cgpa').value = sample.cgpa;
+            document.getElementById('aptitude').value = sample.aptitude;
+            document.getElementById('coding').value = sample.coding;
+            document.getElementById('communication').value = sample.communication;
+            document.getElementById('internships').value = sample.internships;
+        }
+        
+        function clearForm() {
+            document.getElementById('predictionForm').reset();
+            document.getElementById('result').classList.remove('show');
+        }
+        
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                cgpa: parseFloat(document.getElementById('cgpa').value),
+                aptitude_score: parseFloat(document.getElementById('aptitude').value),
+                coding_skill: parseFloat(document.getElementById('coding').value),
+                communication: parseFloat(document.getElementById('communication').value),
+                internships: parseInt(document.getElementById('internships').value)
+            };
+            
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            resultDiv.classList.remove('show');
+            loadingDiv.classList.add('show');
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                loadingDiv.classList.remove('show');
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Check if student is eligible based on all criteria
+                    if (result.eligibility_status === "Not Eligible") {
+                        resultDiv.className = 'result-container result-error show';
+                        
+                        let failedList = result.failed_criteria.map(criteria => 
+                            `<li style="margin-bottom: 8px; color: #721c24;">❌ ${criteria}</li>`
+                        ).join('');
+                        
+                        resultDiv.innerHTML = `
+                            <h3 class="result-title">
+                                <span>❌</span>
+                                Not Eligible for Employment
+                            </h3>
+                            <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 15px;">
+                                <p style="font-size: 1.1em; color: #721c24; margin-bottom: 15px;">
+                                    <strong>Failed Eligibility Criteria:</strong>
+                                </p>
+                                <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                                    ${failedList}
+                                </ul>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                                    <p style="color: #333; margin: 0; font-weight: 600; margin-bottom: 10px;">Minimum Requirements:</p>
+                                    <ul style="color: #666; margin: 0; padding-left: 20px;">
+                                        <li>CGPA: ${result.requirements.cgpa}</li>
+                                        <li>Aptitude Score: ${result.requirements.aptitude_score}</li>
+                                        <li>Coding Skill: ${result.requirements.coding_skill}</li>
+                                        <li>Communication: ${result.requirements.communication}</li>
+                                        <li>Internships: ${result.requirements.internships}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="employee-info">
+                                <h4>📊 Employee Profile Summary</h4>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="label">CGPA:</span>
+                                        <span class="value" style="color: ${data.cgpa >= 5.5 ? '#667eea' : '#dc3545'};">${data.cgpa}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Aptitude:</span>
+                                        <span class="value" style="color: ${data.aptitude_score > 38 ? '#667eea' : '#dc3545'};">${data.aptitude_score}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Coding:</span>
+                                        <span class="value" style="color: ${data.coding_skill > 4 ? '#667eea' : '#dc3545'};">${data.coding_skill}/10</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Communication:</span>
+                                        <span class="value" style="color: ${data.communication > 6 ? '#667eea' : '#dc3545'};">${data.communication}/10</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Internships:</span>
+                                        <span class="value" style="color: ${data.internships >= 2 ? '#667eea' : '#dc3545'};">${data.internships}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const lrEmployable = result.logistic_regression === 1;
+                    const dtEmployable = result.decision_tree === 1;
+                    
+                    resultDiv.className = 'result-container result-success show';
+                    resultDiv.innerHTML = `
+                        <h3 class="result-title">
+                            <span>✅</span>
+                            Prediction Results
+                        </h3>
+                        
+                        <div style="background: #d1ecf1; border: 2px solid #0c5460; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <p style="color: #0c5460; margin: 0 0 15px 0; font-weight: 700; font-size: 1.1em;">
+                                ✓ Eligibility Status: <strong>${result.eligibility_status}</strong>
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                                <div style="background: white; padding: 10px; border-radius: 6px;">
+                                    <small style="color: #666;">CGPA:</small> <strong style="color: #0c5460;">${result.requirements.cgpa}</strong>
+                                </div>
+                                <div style="background: white; padding: 10px; border-radius: 6px;">
+                                    <small style="color: #666;">Aptitude:</small> <strong style="color: #0c5460;">${result.requirements.aptitude_score}</strong>
+                                </div>
+                                <div style="background: white; padding: 10px; border-radius: 6px;">
+                                    <small style="color: #666;">Coding:</small> <strong style="color: #0c5460;">${result.requirements.coding_skill}</strong>
+                                </div>
+                                <div style="background: white; padding: 10px; border-radius: 6px;">
+                                    <small style="color: #666;">Communication:</small> <strong style="color: #0c5460;">${result.requirements.communication}</strong>
+                                </div>
+                                <div style="background: white; padding: 10px; border-radius: 6px;">
+                                    <small style="color: #666;">Internships:</small> <strong style="color: #0c5460;">${result.requirements.internships}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="prediction-cards">
+                            <div class="prediction-card ${lrEmployable ? 'employable' : 'not-employable'}">
+                                <h3>Logistic Regression Model</h3>
+                                <div class="value">${lrEmployable ? '✓' : '✗'}</div>
+                                <div class="label">${lrEmployable ? 'EMPLOYABLE' : 'NOT EMPLOYABLE'}</div>
+                            </div>
+                            
+                            <div class="prediction-card ${dtEmployable ? 'employable' : 'not-employable'}">
+                                <h3>Decision Tree Model</h3>
+                                <div class="value">${dtEmployable ? '✓' : '✗'}</div>
+                                <div class="label">${dtEmployable ? 'EMPLOYABLE' : 'NOT EMPLOYABLE'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="employee-info">
+                            <h4>📊 Employee Profile Summary</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">CGPA:</span>
+                                    <span class="value">${data.cgpa}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Aptitude:</span>
+                                    <span class="value">${data.aptitude_score}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Coding:</span>
+                                    <span class="value">${data.coding_skill}/10</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Communication:</span>
+                                    <span class="value">${data.communication}/10</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Internships:</span>
+                                    <span class="value">${data.internships}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const error = await response.json();
+                    resultDiv.className = 'result-container result-error show';
+                    resultDiv.innerHTML = `
+                        <h3 class="result-title">
+                            <span>❌</span>
+                            Validation Error
+                        </h3>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                loadingDiv.classList.remove('show');
+                resultDiv.className = 'result-container result-error show';
+                resultDiv.innerHTML = `
+                    <h3 class="result-title">
+                        <span>❌</span>
+                        Connection Error
+                    </h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Please make sure the Django server is running</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

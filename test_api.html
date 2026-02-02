@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employability Prediction API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .result.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+        }
+        
+        .prediction-result {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .prediction-box {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .employable {
+            background: #28a745;
+            color: white;
+        }
+        
+        .not-employable {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .prediction-box h4 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .prediction-box .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-item strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Employability Prediction API Tester</h1>
+        
+        <!-- Prediction Form -->
+        <div class="card">
+            <h2>Make a Prediction</h2>
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="cgpa">CGPA (0.0 - 4.0)</label>
+                    <input type="number" id="cgpa" step="0.1" min="0" max="4" value="3.5" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="aptitude">Aptitude Score (0 - 100)</label>
+                    <input type="number" id="aptitude" min="0" max="100" value="85" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coding">Coding Skill (0 - 10)</label>
+                    <input type="number" id="coding" min="0" max="10" value="8" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="communication">Communication (0 - 10)</label>
+                    <input type="number" id="communication" min="0" max="10" value="7" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="internships">Internships (0+)</label>
+                    <input type="number" id="internships" min="0" value="2" required>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">🔮 Predict Employability</button>
+                    <button type="button" class="btn-secondary" onclick="loadSample('high')">High Performer</button>
+                    <button type="button" class="btn-secondary" onclick="loadSample('average')">Average</button>
+                    <button type="button" class="btn-secondary" onclick="loadSample('low')">Low Performer</button>
+                </div>
+            </form>
+            
+            <div id="predictionResult" class="result"></div>
+        </div>
+        
+        <!-- API Info -->
+        <div class="card">
+            <h2>API Information</h2>
+            <button class="btn-success" onclick="getAPIInfo()">📋 Get API Info</button>
+            <div id="apiInfoResult" class="result"></div>
+        </div>
+        
+        <!-- Model Info -->
+        <div class="card">
+            <h2>Model Information</h2>
+            <button class="btn-success" onclick="getModelInfo()">🤖 Get Model Info</button>
+            <div id="modelInfoResult" class="result"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8000/api/employability';
+        
+        // Sample data
+        const samples = {
+            high: { cgpa: 3.8, aptitude: 90, coding: 9, communication: 8, internships: 3 },
+            average: { cgpa: 3.0, aptitude: 70, coding: 6, communication: 6, internships: 1 },
+            low: { cgpa: 2.5, aptitude: 55, coding: 4, communication: 5, internships: 0 }
+        };
+        
+        function loadSample(type) {
+            const sample = samples[type];
+            document.getElementById('cgpa').value = sample.cgpa;
+            document.getElementById('aptitude').value = sample.aptitude;
+            document.getElementById('coding').value = sample.coding;
+            document.getElementById('communication').value = sample.communication;
+            document.getElementById('internships').value = sample.internships;
+        }
+        
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                cgpa: parseFloat(document.getElementById('cgpa').value),
+                aptitude_score: parseFloat(document.getElementById('aptitude').value),
+                coding_skill: parseFloat(document.getElementById('coding').value),
+                communication: parseFloat(document.getElementById('communication').value),
+                internships: parseInt(document.getElementById('internships').value)
+            };
+            
+            const resultDiv = document.getElementById('predictionResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = '<h3>⏳ Making prediction...</h3>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/predict/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const lrClass = result.logistic_regression === 1 ? 'employable' : 'not-employable';
+                    const dtClass = result.decision_tree === 1 ? 'employable' : 'not-employable';
+                    const lrText = result.logistic_regression === 1 ? '✅ Employable' : '❌ Not Employable';
+                    const dtText = result.decision_tree === 1 ? '✅ Employable' : '❌ Not Employable';
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>🎉 Prediction Results</h3>
+                        <div class="prediction-result">
+                            <div class="prediction-box ${lrClass}">
+                                <h4>Logistic Regression</h4>
+                                <div class="value">${lrText}</div>
+                            </div>
+                            <div class="prediction-box ${dtClass}">
+                                <h4>Decision Tree</h4>
+                                <div class="value">${dtText}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<h3>❌ Error</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Connection Error</h3><p>${error.message}</p><p>Make sure the Django server is running!</p>`;
+            }
+        });
+        
+        async function getAPIInfo() {
+            const resultDiv = document.getElementById('apiInfoResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = '<h3>⏳ Loading...</h3>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/predict/`);
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <h3>📋 API Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Version:</strong> ${data.version}
+                        </div>
+                        <div class="info-item">
+                            <strong>Description:</strong> ${data.description}
+                        </div>
+                    </div>
+                    <h4 style="margin-top: 20px;">Available Endpoints:</h4>
+                    <pre>${JSON.stringify(data.endpoints, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+            }
+        }
+        
+        async function getModelInfo() {
+            const resultDiv = document.getElementById('modelInfoResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = '<h3>⏳ Loading...</h3>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/model-info/`);
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <h3>🤖 Model Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Logistic Regression:</strong><br>
+                            Status: ${data.logistic_regression.exists ? '✅ Trained' : '❌ Not Trained'}<br>
+                            ${data.logistic_regression.last_trained ? 'Last Trained: ' + data.logistic_regression.last_trained : ''}
+                        </div>
+                        <div class="info-item">
+                            <strong>Decision Tree:</strong><br>
+                            Status: ${data.decision_tree.exists ? '✅ Trained' : '❌ Not Trained'}<br>
+                            ${data.decision_tree.last_trained ? 'Last Trained: ' + data.decision_tree.last_trained : ''}
+                        </div>
+                    </div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
