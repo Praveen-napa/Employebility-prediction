@@ -1,0 +1,55 @@
+services:
+  # Web Service - Django Application
+  - type: web
+    name: employee-employability-prediction
+    env: python
+    plan: free
+    # Build settings
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python Employee_details/train.py
+    # Start command
+    startCommand: |
+      python manage.py migrate --noinput
+      gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: "*"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DISABLE_COLLECTSTATIC
+        value: 1
+    # Health check
+    healthCheckPath: /api/employability/predict/
+    # Auto-deploy settings
+    autoDeploy: true
+    # Disk storage for model files
+    disk:
+      name: model-storage
+      mountPath: /opt/render/project/src/Employee_details
+      sizeGB: 1
+
+# Database (optional - currently using no database)
+# Uncomment if you want to add PostgreSQL database in future
+# - type: pserv
+#   name: employee-prediction-db
+#   env: postgresql
+#   plan: free
+#   databaseName: employability_db
+#   databaseUser: admin
+
+# Static file service (optional)
+# - type: static
+#   name: employee-static-files
+#   staticPublishPath: ./staticfiles
+#   buildCommand: python manage.py collectstatic --noinput
+#   publishPath: staticfiles
